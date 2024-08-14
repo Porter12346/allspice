@@ -2,7 +2,6 @@ namespace allspice.Models;
 
 public class Recipe
 {
-
     public int id { get; set; }
 
     public DateTime createdAt { get; set; }
