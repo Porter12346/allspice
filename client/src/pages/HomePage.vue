@@ -1,9 +1,22 @@
 <script setup>
+import { AppState } from '@/AppState.js';
+import { recipesService } from '@/services/ReciepesService.js';
+import { computed, onMounted } from 'vue';
 
+
+const recipes = computed(() => AppState.recipes)
+
+onMounted(()=>{
+  getRecipes()
+})
+
+async function getRecipes(){
+  await recipesService.getRecipes()
+}
 </script>
 
 <template>
-  <div class="m-2">
+  <div class="m-2 the-font">
     <div class="container-fluid bg-img pb-5">
       <div class="row">
         <div class="col-12 d-flex justify-content-end align-items-center">
@@ -32,6 +45,13 @@
             </div>
             <div class="col-4 p-2 border">
               <a href="">favorites</a>
+            </div>
+          </div>
+        </div>
+        <div class="container">
+          <div v-if="recipes.length > 0" class="row">
+            <div v-for="recipe in recipes" :key="recipe.id" class="col-4">
+              <RecipeCard :recipeProp="recipe"/>
             </div>
           </div>
         </div>
@@ -67,8 +87,15 @@
   background-size: cover;
 }
 
-.neg-mar{
+.neg-mar {
   background-color: white;
   margin-top: -2%;
 }
+
+.the-font {
+  font-family: "Sahitya", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
 </style>

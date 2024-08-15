@@ -2,7 +2,7 @@ import { Account } from "./Account.js"
 
 export class Recipe{
     constructor(data){
-        this.id = data.id || data._id
+        this.id = data.id
         this.createdAt = new Date(data.createdAt)
         this.updatedAt = new Date(data.updatedAt)
         this.title = data.title
@@ -11,6 +11,10 @@ export class Recipe{
         this.category = data.category
         this.creatorId = data.creatorId
         this.creator = new Account(data.creator)
-        this.subTitle = data.subTitle
+    }
+
+    get backgroundImg(){
+        return `background-image: url(${this.img})`
     }
 }
+

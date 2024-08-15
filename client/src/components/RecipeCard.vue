@@ -1,24 +1,32 @@
 <script setup>
 import { Recipe } from '@/models/Recipe.js';
 
-const props = defineProps({recipeProp: { type: Recipe, required: true}})
+const props = defineProps({ recipeProp: { type: Recipe, required: true } })
 </script>
 
 
 <template>
-<div class="">
-    <div>
-        <p>{{ recipeProp.category }}</p>
-        <p><i class="mdi mdi-heart-outline"></i></p>
+    <div v-if="recipeProp" class="row flex-column justify-content-between card-bg-img card-height text-light m-2"
+        :style="props.recipeProp.backgroundImg">
+        <div class="col-6 d-flex justify-content-between w-100">
+            <p class="bg-transparent-dark rounded py-1 px-3 mt-1">{{ recipeProp.category }}</p>
+            <p class="bg-transparent-dark rounded-bottom p-1"><i class="mdi mdi-heart-outline"></i></p>
+        </div>
+        <div class="col-6 d-flex justify-content-end w-100">
+            <p class="bg-transparent-dark rounded p-1 w-100">{{ recipeProp.title }}</p>
+        </div>
     </div>
-    <div>
-        <p>{{ recipeProp.title }}</p>
-        <p>{{ recipeProp.subTitle }}</p>
-    </div>
-</div>
 </template>
 
 
 <style lang="scss" scoped>
+.card-height{
+    aspect-ratio: 1/1;
+    background-position: center;
+    background-size: cover;
+}
 
+.bg-transparent-dark{
+    background-color: rgba(0, 0, 0, 0.454);
+}
 </style>
