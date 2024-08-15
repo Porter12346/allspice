@@ -28,6 +28,7 @@ CREATE TABLE ingredients (
   name VARCHAR(255) NOT NULL,
   quantity VARCHAR(255) NOT NULL,
   recipeId INT NOT NULL,
-  Foreign Key (recipeId) REFERENCES (recipes)
+  Foreign Key (recipeId) REFERENCES recipes(id) ON DELETE CASCADE
+);
 
-)
+DROP TABLE ingredients;
