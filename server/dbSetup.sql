@@ -14,6 +14,7 @@ CREATE TABLE recipes (
   title VARCHAR(255) NOT NULL,
   instructions VARCHAR(5000),
   img VARCHAR(1000),
+  subtitle VARCHAR(500),
   category ENUM('breakfast', 'lunch', 'dinner', 'snack', 'dessert') NOT NULL DEFAULT 'lunch',
   creatorId VARCHAR(255) NOT NULL, 
   Foreign Key (creatorId) REFERENCES accounts (id) ON DELETE CASCADE
