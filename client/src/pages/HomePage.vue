@@ -2,16 +2,20 @@
 import { AppState } from '@/AppState.js';
 import { ingredientsService } from '@/services/IngredientsService.js';
 import { recipesService } from '@/services/ReciepesService.js';
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 
 const recipes = computed(() => AppState.recipes)
-const activeRecipe = computed(() => AppState.activeRecipe)
+const activeRecipe = computed(() => { instructions = AppState.activeRecipe?.instructions; return (AppState.activeRecipe) })
 const ingredients = computed(() => AppState.ingredients)
+
+let edit = true
 
 onMounted(() => {
   getRecipes()
 })
+
+let instructions = ""
 
 // async function setActive(recipe){
 //     recipesService.setActiveRecipe(recipe)
@@ -71,26 +75,48 @@ async function getRecipes() {
 
   <!-- Modal -->
   <div class="modal fade" id="recipeModal" tabindex="-1" aria-labelledby="recipeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-      <div class="modal-content" v-if="activeRecipe">
-        <div v-if="ingredients">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="recipeModalLabel">Recipe Info</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body p-0 m-0">
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col-6 p-0">
-                  <img class="img-fluid heightset rounded" :src="activeRecipe?.img" alt="">
-                </div>
-                <div class="col-6">
-                  <h2>{{ activeRecipe.title }}</h2>
-                  <p>by: {{ activeRecipe.creator.name }}</p>
-                  <span class="transparent-bg rounded p-1">{{ activeRecipe.category }}</span>
-                  <h4 class="mt-3">Ingredients:</h4>
-                  <div v-for="ingredient in ingredients" :key="ingredient.id" class="d-flex">
-                    <p class="mb-1">• {{ ingredient.quantity }} {{ ingredient.name }}</p>
+    <div class="modal-dialog modal-xl">\
+      <div v-if="edit">
+        <div class="modal-content" v-if="activeRecipe">
+          <div v-if="ingredients">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="recipeModalLabel">Recipe Info</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0 m-0">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-6 p-0">
+                    <img class="img-fluid heightset rounded" :src="activeRecipe?.img" alt="">
+                  </div>
+                  <div class="col-6 d-flex flex-column justify-content-between">
+                    <div class="d-flex align-items-center">
+                      <h2 class="text-primary pe-4">{{ activeRecipe.title }}</h2>
+                      <i type="button" class="mdi mdi-dots-horizontal fs-1 "></i>
+                    </div>
+                    <p>by: {{ activeRecipe.creator.name }}</p>
+                    <div>
+                      <span class="transparent-bg rounded p-1">{{ activeRecipe.category }}</span>
+                    </div>
+                    <h4 class="mt-3">Ingredients:</h4>
+                    <div v-for="ingredient in ingredients" :key="ingredient.id" class="d-flex">
+                      <p class="mb-1"><span type="button" @click="console.log('click')"
+                          class="text-danger fw-bolder">X</span> {{
+                            ingredient.quantity }} {{ ingredient.name }}</p>
+                    </div>
+                    <div class="">
+                      <div class="input-group">
+                        <input type="text" aria-label="quantity" class="form-control" placeholder="quantity">
+                        <input type="text" aria-label="ingredient" class="form-control w-50" placeholder="new ingredient text">
+                        <button class="btn btn-outline-secondary" type="button">Add</button>
+                      </div>
+                    </div>
+                    <div class="my-3 d-flex flex-column">
+                      <h5>Instructions:</h5>
+                      <textarea v-model="instructions" class="form-control" id="instructionsTextArea" rows="6"
+                        style="resize: none;"></textarea>
+                      <button class="btn btn-success w-25 align-self-end mt-2">Save</button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -98,6 +124,37 @@ async function getRecipes() {
           </div>
         </div>
       </div>
+      <form v-else>
+        <div class="modal-content" v-if="activeRecipe">
+          <div v-if="ingredients">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="recipeModalLabel">Recipe Info</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0 m-0">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-6 p-0">
+                    <img class="img-fluid heightset rounded" :src="activeRecipe?.img" alt="">
+                  </div>
+                  <div class="col-6">
+                    <div class="d-flex align-items-center">
+                      <h2 class="text-primary pe-4">{{ activeRecipe.title }}</h2>
+                      <i type="button" class="mdi mdi-dots-horizontal fs-1 "></i>
+                    </div>
+                    <p>by: {{ activeRecipe.creator.name }}</p>
+                    <span class="transparent-bg rounded p-1">{{ activeRecipe.category }}</span>
+                    <h4 class="mt-3">Ingredients:</h4>
+                    <div v-for="ingredient in ingredients" :key="ingredient.id" class="d-flex">
+                      <p class="mb-1">• {{ ingredient.quantity }} {{ ingredient.name }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 </template>

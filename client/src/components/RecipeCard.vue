@@ -16,7 +16,7 @@ async function setActive(){
 <template>
     <div v-if="recipeProp" @click="setActive()" data-bs-toggle="modal" data-bs-target="#recipeModal"
         class="row flex-column justify-content-between card-bg-img card-height text-light m-2"
-        :style="props.recipeProp.backgroundImg">
+        :style="props.recipeProp.backgroundImg"  type="button">
         <div class="col-6 d-flex justify-content-between w-100">
             <p class="bg-transparent-dark rounded py-1 px-3 mt-1">{{ recipeProp.category }}</p>
             <p class="bg-transparent-dark rounded-bottom p-1"><i class="mdi mdi-heart-outline"></i></p>
