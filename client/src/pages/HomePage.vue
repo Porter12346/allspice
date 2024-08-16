@@ -9,7 +9,7 @@ const recipes = computed(() => AppState.recipes)
 const activeRecipe = computed(() => { instructions = AppState.activeRecipe?.instructions; return (AppState.activeRecipe) })
 const ingredients = computed(() => AppState.ingredients)
 
-let edit = true
+let edit = false
 
 onMounted(() => {
   getRecipes()
@@ -107,7 +107,8 @@ async function getRecipes() {
                     <div class="">
                       <div class="input-group">
                         <input type="text" aria-label="quantity" class="form-control" placeholder="quantity">
-                        <input type="text" aria-label="ingredient" class="form-control w-50" placeholder="new ingredient text">
+                        <input type="text" aria-label="ingredient" class="form-control w-50"
+                          placeholder="new ingredient text">
                         <button class="btn btn-outline-secondary" type="button">Add</button>
                       </div>
                     </div>
@@ -137,17 +138,21 @@ async function getRecipes() {
                   <div class="col-6 p-0">
                     <img class="img-fluid heightset rounded" :src="activeRecipe?.img" alt="">
                   </div>
-                  <div class="col-6">
+                  <div class="col-6 d-flex flex-column justify-content-between mb-5">
                     <div class="d-flex align-items-center">
                       <h2 class="text-primary pe-4">{{ activeRecipe.title }}</h2>
                       <i type="button" class="mdi mdi-dots-horizontal fs-1 "></i>
                     </div>
                     <p>by: {{ activeRecipe.creator.name }}</p>
-                    <span class="transparent-bg rounded p-1">{{ activeRecipe.category }}</span>
+                    <div>
+                      <span class="transparent-bg rounded p-1">{{ activeRecipe.category }}</span>
+                    </div>
                     <h4 class="mt-3">Ingredients:</h4>
                     <div v-for="ingredient in ingredients" :key="ingredient.id" class="d-flex">
                       <p class="mb-1">• {{ ingredient.quantity }} {{ ingredient.name }}</p>
                     </div>
+                    <h4>Instructions:</h4>
+                    <p class="mb-5">{{ activeRecipe.instructions }}</p>
                   </div>
                 </div>
               </div>
