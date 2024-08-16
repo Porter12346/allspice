@@ -4,6 +4,9 @@ import { AppState } from "@/AppState.js"
 import { logger } from "@/utils/Logger.js"
 
 class RecipesService {
+    setActiveRecipe(recipeProp) {
+        AppState.activeRecipe = recipeProp;
+    }
     async getRecipes() {
         let response = await api.get('api/recipes')
         let recipes = response.data.map((recipeData) => new Recipe(recipeData))

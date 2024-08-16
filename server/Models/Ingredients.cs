@@ -1,8 +1,9 @@
 namespace allspice.Models;
 
-public class ingredients
+public class Ingredient
 {
     public int id { get; set; }
+
     public DateTime createdAt { get; set; }
 
     public string name { get; set; }
