@@ -2,20 +2,36 @@
 import { AppState } from '@/AppState.js';
 import { ingredientsService } from '@/services/IngredientsService.js';
 import { recipesService } from '@/services/ReciepesService.js';
-import { computed, onMounted, ref } from 'vue';
+import { logger } from '@/utils/Logger.js';
+import Pop from '@/utils/Pop.js';
+import { computed, onMounted, ref, watch } from 'vue';
 
+const instructions = ref('')
 
 const recipes = computed(() => AppState.recipes)
-const activeRecipe = computed(() => { instructions = AppState.activeRecipe?.instructions; return (AppState.activeRecipe) })
+const activeRecipe = computed(() => {
+  return (AppState.activeRecipe)
+})
 const ingredients = computed(() => AppState.ingredients)
 
-let edit = false
+watch(activeRecipe, () => instructions.value = activeRecipe.value.instructions)
+
+let edit = true
 
 onMounted(() => {
   getRecipes()
 })
 
-let instructions = ""
+
+const ingredientData = ref({
+  quantity: 0,
+  name: ''
+})
+
+async function makeIngredient(){
+  ingredientsService.createIngredient(ingredientData.value)
+}
+
 
 // async function setActive(recipe){
 //     recipesService.setActiveRecipe(recipe)
@@ -24,6 +40,12 @@ let instructions = ""
 
 async function getRecipes() {
   await recipesService.getRecipes()
+}
+
+async function editRecipe() {
+  const newRecipe = await recipesService.editRecipeInstruction(instructions)
+  logger.log(newRecipe)
+  Pop.success("edited")
 }
 </script>
 
@@ -89,7 +111,7 @@ async function getRecipes() {
                   <div class="col-6 p-0">
                     <img class="img-fluid heightset rounded" :src="activeRecipe?.img" alt="">
                   </div>
-                  <div class="col-6 d-flex flex-column justify-content-between">
+                  <form @submit.prevent="editRecipe()" class="col-6 d-flex flex-column justify-content-between">
                     <div class="d-flex align-items-center">
                       <h2 class="text-primary pe-4">{{ activeRecipe.title }}</h2>
                       <i type="button" class="mdi mdi-dots-horizontal fs-1 "></i>
@@ -105,27 +127,27 @@ async function getRecipes() {
                             ingredient.quantity }} {{ ingredient.name }}</p>
                     </div>
                     <div class="">
-                      <div class="input-group">
-                        <input type="text" aria-label="quantity" class="form-control" placeholder="quantity">
-                        <input type="text" aria-label="ingredient" class="form-control w-50"
+                      <form @submit.prevent="makeIngredient()" class="input-group">
+                        <input v-model="ingredientData.quantity" type="text" aria-label="quantity" class="form-control" placeholder="quantity">
+                        <input v-model="ingredientData.name" type="text" aria-label="ingredient" class="form-control w-50"
                           placeholder="new ingredient text">
-                        <button class="btn btn-outline-secondary" type="button">Add</button>
-                      </div>
+                        <button class="btn btn-outline-secondary" type="submit">Add</button>
+                      </form>
                     </div>
-                    <div class="my-3 d-flex flex-column">
+                    <div class="mt-3 d-flex flex-column">
                       <h5>Instructions:</h5>
                       <textarea v-model="instructions" class="form-control" id="instructionsTextArea" rows="6"
                         style="resize: none;"></textarea>
-                      <button class="btn btn-success w-25 align-self-end mt-2">Save</button>
                     </div>
-                  </div>
+                    <button type="submit" class="btn btn-success w-25 align-self-end mb-2">Save</button>
+                  </form>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <form v-else>
+      <div v-else>
         <div class="modal-content" v-if="activeRecipe">
           <div v-if="ingredients">
             <div class="modal-header">
@@ -159,7 +181,7 @@ async function getRecipes() {
             </div>
           </div>
         </div>
-      </form>
+      </div>
     </div>
   </div>
 </template>
