@@ -28,7 +28,7 @@ async function editRecipe() {
 }
 
 async function makeIngredient() {
-    ingredientsService.createIngredient(ingredients.value)
+    ingredientsService.createIngredient(ingredientData.value)
 }
 
 const ingredientData = ref({
@@ -140,6 +140,7 @@ let edit = ref(false)
 
 
 <style lang="scss" scoped>
+
 .heightset {
     height: 75vh;
     object-fit: cover;

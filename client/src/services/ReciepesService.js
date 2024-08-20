@@ -14,7 +14,10 @@ class RecipesService {
 
     async editRecipeInstruction(instructions) {
         const response = await api.put(`api/recipes/${AppState.activeRecipe.id}`,  {instructions: instructions.value} )
-        AppState.activeRecipe = new Recipe(response.data)
+        const newRecipe = new Recipe(response.data)
+        AppState.activeRecipe = newRecipe
+        const index = AppState.recipes.findIndex((recipe)=>recipe.id == AppState.activeRecipe.id)
+        AppState.recipes[index] = newRecipe
         return(AppState.activeRecipe) 
     }
     setActiveRecipe(recipeProp) {
