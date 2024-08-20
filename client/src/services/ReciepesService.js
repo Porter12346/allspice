@@ -5,6 +5,14 @@ import { logger } from "@/utils/Logger.js"
 import Pop from "@/utils/Pop.js"
 
 class RecipesService {
+    async deleteActiveRecipe() {
+        const recipe = AppState.activeRecipe
+        if (AppState.account.id != recipe.creatorId) throw new Error('you cannot delete this restaurant')
+        await api.delete(`api/recipes/${recipe.id}`)
+        const index = AppState.recipes.findIndex((recipe) => recipe.id == AppState.activeRecipe.id)
+        AppState.recipes.splice(index, 1)
+        AppState.activeRecipe = null
+    }
     async createRecipe(recipeData) {
         const response = await api.post('api/recipes', recipeData)
         const recipe = new Recipe(response.data)
@@ -13,12 +21,12 @@ class RecipesService {
     }
 
     async editRecipeInstruction(instructions) {
-        const response = await api.put(`api/recipes/${AppState.activeRecipe.id}`,  {instructions: instructions.value} )
+        const response = await api.put(`api/recipes/${AppState.activeRecipe.id}`, { instructions: instructions.value })
         const newRecipe = new Recipe(response.data)
         AppState.activeRecipe = newRecipe
-        const index = AppState.recipes.findIndex((recipe)=>recipe.id == AppState.activeRecipe.id)
+        const index = AppState.recipes.findIndex((recipe) => recipe.id == AppState.activeRecipe.id)
         AppState.recipes[index] = newRecipe
-        return(AppState.activeRecipe) 
+        return (AppState.activeRecipe)
     }
     setActiveRecipe(recipeProp) {
         AppState.activeRecipe = recipeProp;

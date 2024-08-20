@@ -5,6 +5,7 @@ import { ingredientsService } from '@/services/IngredientsService.js';
 import { recipesService } from '@/services/ReciepesService.js';
 import { logger } from '@/utils/Logger.js';
 import Pop from '@/utils/Pop.js';
+import { Modal } from 'bootstrap';
 import { computed, ref, watch } from 'vue';
 
 const props = defineProps({
@@ -19,16 +20,26 @@ const ingredients = computed(() => AppState.ingredients)
 
 const instructions = ref('')
 
-watch(activeRecipe, () => instructions.value = activeRecipe.value.instructions)
+watch(activeRecipe, () => instructions.value = activeRecipe.value?.instructions)
 
 async function editRecipe() {
-    const newRecipe = await recipesService.editRecipeInstruction(instructions)
-    logger.log(newRecipe)
-    Pop.success("edited")
+    try {
+        const newRecipe = await recipesService.editRecipeInstruction(instructions)
+        logger.log(newRecipe)
+        Pop.success("edited")
+    }
+    catch (error) {
+        Pop.error(error);
+    }
 }
 
 async function makeIngredient() {
-    ingredientsService.createIngredient(ingredientData.value)
+    try {
+        ingredientsService.createIngredient(ingredientData.value)
+    }
+    catch (error) {
+        Pop.error(error);
+    }
 }
 
 const ingredientData = ref({
@@ -37,6 +48,17 @@ const ingredientData = ref({
 })
 
 let edit = ref(false)
+
+async function deleteRecipe() {
+    try {
+        recipesService.deleteActiveRecipe()
+        Modal.getOrCreateInstance('#recipeModal').hide()
+        Pop.success("Deleted")
+    }
+    catch (error) {
+        Pop.error(error);
+    }
+}
 </script>
 
 
@@ -58,10 +80,17 @@ let edit = ref(false)
                                     </div>
                                     <form @submit.prevent="editRecipe()"
                                         class="col-6 d-flex flex-column justify-content-between">
-                                        <div class="d-flex align-items-center">
+                                        <div class="d-flex align-items-center dropdown">
                                             <h2 class="text-primary pe-4">{{ activeRecipe.title }}</h2>
-                                            <i @click="edit = false" type="button"
+                                            <i v-if="accountProp?.id == activeRecipe?.creatorId" @click="edit = edit"
+                                                type="button" data-bs-toggle="dropdown"
                                                 class="mdi mdi-dots-horizontal fs-1 "></i>
+                                            <ul class="dropdown-menu">
+                                                <li><button @click="edit = !edit" class="dropdown-item">Cancel
+                                                        Edit</button></li>
+                                                <li><button @click="deleteRecipe()"
+                                                        class="dropdown-item text-danger">Delete</button></li>
+                                            </ul>
                                         </div>
                                         <p>by: {{ activeRecipe.creator.name }}</p>
                                         <div>
@@ -110,10 +139,17 @@ let edit = ref(false)
                                         <img class="img-fluid heightset rounded" :src="activeRecipe?.img" alt="">
                                     </div>
                                     <div class="col-6 d-flex flex-column justify-content-between mb-5">
-                                        <div class="d-flex align-items-center">
+                                        <div class="d-flex align-items-center dropdown">
                                             <h2 class="text-primary pe-4">{{ activeRecipe.title }}</h2>
-                                            <i v-if="accountProp?.id == activeRecipe?.creatorId" @click="edit = true"
-                                                type="button" class="mdi mdi-dots-horizontal fs-1 "></i>
+                                            <i v-if="accountProp?.id == activeRecipe?.creatorId" @click="edit = edit"
+                                                type="button" data-bs-toggle="dropdown"
+                                                class="mdi mdi-dots-horizontal fs-1 "></i>
+                                            <ul class="dropdown-menu">
+                                                <li><button @click="edit = !edit" class="dropdown-item">Edit</button>
+                                                </li>
+                                                <li><button @click="deleteRecipe()"
+                                                        class="dropdown-item text-danger">Delete</button></li>
+                                            </ul>
                                         </div>
                                         <p>by: {{ activeRecipe.creator.name }}</p>
                                         <div>
@@ -140,7 +176,6 @@ let edit = ref(false)
 
 
 <style lang="scss" scoped>
-
 .heightset {
     height: 75vh;
     object-fit: cover;
