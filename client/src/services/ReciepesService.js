@@ -5,6 +5,13 @@ import { logger } from "@/utils/Logger.js"
 import Pop from "@/utils/Pop.js"
 
 class RecipesService {
+    async createRecipe(recipeData) {
+        const response = await api.post('api/recipes', recipeData)
+        const recipe = new Recipe(response.data)
+        AppState.recipes.unshift(recipe)
+        return recipe
+    }
+
     async editRecipeInstruction(instructions) {
         const response = await api.put(`api/recipes/${AppState.activeRecipe.id}`,  {instructions: instructions.value} )
         AppState.activeRecipe = new Recipe(response.data)

@@ -4,6 +4,7 @@ import { ingredientsService } from '@/services/IngredientsService.js';
 import { recipesService } from '@/services/ReciepesService.js';
 import { logger } from '@/utils/Logger.js';
 import Pop from '@/utils/Pop.js';
+import { Modal } from 'bootstrap';
 import { computed, onMounted, ref, watch } from 'vue';
 
 const instructions = ref('')
@@ -13,10 +14,11 @@ const activeRecipe = computed(() => {
   return (AppState.activeRecipe)
 })
 const ingredients = computed(() => AppState.ingredients)
+const account = computed(() => AppState.account)
 
 watch(activeRecipe, () => instructions.value = activeRecipe.value.instructions)
 
-let edit = true
+let edit = false
 
 onMounted(() => {
   getRecipes()
@@ -26,6 +28,12 @@ onMounted(() => {
 const ingredientData = ref({
   quantity: 0,
   name: ''
+})
+
+const recipeData = ref({
+  title: '',
+  category: '',
+  img: ''
 })
 
 async function makeIngredient() {
@@ -46,6 +54,14 @@ async function editRecipe() {
   const newRecipe = await recipesService.editRecipeInstruction(instructions)
   logger.log(newRecipe)
   Pop.success("edited")
+}
+
+async function createRecipe() {
+  const newRecipe = await recipesService.createRecipe(recipeData.value)
+  recipesService.setActiveRecipe(newRecipe)
+  Modal.getOrCreateInstance('#createRecipeModal').hide()
+  edit = true
+  Modal.getOrCreateInstance('#recipeModal').show()
 }
 </script>
 
@@ -114,7 +130,7 @@ async function editRecipe() {
                   <form @submit.prevent="editRecipe()" class="col-6 d-flex flex-column justify-content-between">
                     <div class="d-flex align-items-center">
                       <h2 class="text-primary pe-4">{{ activeRecipe.title }}</h2>
-                      <i type="button" class="mdi mdi-dots-horizontal fs-1 "></i>
+                      <i  @click="edit = false" type="button" class="mdi mdi-dots-horizontal fs-1 "></i>
                     </div>
                     <p>by: {{ activeRecipe.creator.name }}</p>
                     <div>
@@ -164,7 +180,7 @@ async function editRecipe() {
                   <div class="col-6 d-flex flex-column justify-content-between mb-5">
                     <div class="d-flex align-items-center">
                       <h2 class="text-primary pe-4">{{ activeRecipe.title }}</h2>
-                      <i type="button" class="mdi mdi-dots-horizontal fs-1 "></i>
+                      <i v-if="account?.id == activeRecipe?.creatorId" @click="edit = true" type="button" class="mdi mdi-dots-horizontal fs-1 "></i>
                     </div>
                     <p>by: {{ activeRecipe.creator.name }}</p>
                     <div>
@@ -185,7 +201,7 @@ async function editRecipe() {
       </div>
     </div>
   </div>
-  <div class="sticky-bottom text-end pb-3 pe-3">
+  <div v-if="account" class="sticky-bottom text-end pb-3 pe-3">
     <button data-bs-toggle="modal" data-bs-target="#createRecipeModal"
       class="btn btn-success fs-1 rounded-circle custom-padding">
       <i class="mdi mdi-plus"></i>
@@ -195,7 +211,7 @@ async function editRecipe() {
   <!-- Modal 2 -->
   <div class="modal fade" id="createRecipeModal" tabindex="-1" aria-labelledby="createRecipeModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog">
+    <form @submit.prevent="createRecipe()" class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header bg-success-subtle">
           <h1 class="modal-title fs-5" id="createRecipeModalLabel">Create Recipe</h1>
@@ -203,28 +219,40 @@ async function editRecipe() {
         </div>
         <div class="modal-body">
           <div class="container">
-            <form class="row">
+            <div class="row">
               <div class="col-6">
                 <div class="mb-3">
                   <label for="createRecipeTitle" class="form-label">Title</label>
-                  <input type="string" class="form-control" id="createRecipeTitle">
+                  <input v-model="recipeData.title" type="string" class="form-control" id="createRecipeTitle">
                 </div>
               </div>
               <div class="col-6">
                 <div class="mb-3">
                   <label for="createRecipeCategory" class="form-label">Category</label>
-                  <input type="string" class="form-control" id="createRecipeCategory">
+                  <select v-model="recipeData.category" id="createRecipeCategory" class="form-select"
+                    aria-label="Category Select">
+                    <option selected disabled>Category</option>
+                    <option value="breakfast">Breakfast</option>
+                    <option value="lunch">Lunch</option>
+                    <option value="dinner">Dinner</option>
+                    <option value="snack">Snack</option>
+                    <option value="dessert">Dessert</option>
+                  </select>
                 </div>
               </div>
-            </form>
+            </div>
           </div>
+        </div>
+        <div class="mb-3 px-4">
+          <label for="createRecipeImg" class="form-label">Img URL</label>
+          <input v-model="recipeData.img" type="string" class="form-control" id="createRecipeImg">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <button type="submit" class="btn btn-primary">Create</button>
         </div>
       </div>
-    </div>
+    </form>
   </div>
 </template>
 
