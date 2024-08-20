@@ -28,7 +28,7 @@ const ingredientData = ref({
   name: ''
 })
 
-async function makeIngredient(){
+async function makeIngredient() {
   ingredientsService.createIngredient(ingredientData.value)
 }
 
@@ -128,9 +128,10 @@ async function editRecipe() {
                     </div>
                     <div class="">
                       <form @submit.prevent="makeIngredient()" class="input-group">
-                        <input v-model="ingredientData.quantity" type="text" aria-label="quantity" class="form-control" placeholder="quantity">
-                        <input v-model="ingredientData.name" type="text" aria-label="ingredient" class="form-control w-50"
-                          placeholder="new ingredient text">
+                        <input v-model="ingredientData.quantity" type="text" aria-label="quantity" class="form-control"
+                          placeholder="quantity">
+                        <input v-model="ingredientData.name" type="text" aria-label="ingredient"
+                          class="form-control w-50" placeholder="new ingredient text">
                         <button class="btn btn-outline-secondary" type="submit">Add</button>
                       </form>
                     </div>
@@ -184,6 +185,47 @@ async function editRecipe() {
       </div>
     </div>
   </div>
+  <div class="sticky-bottom text-end pb-3 pe-3">
+    <button data-bs-toggle="modal" data-bs-target="#createRecipeModal"
+      class="btn btn-success fs-1 rounded-circle custom-padding">
+      <i class="mdi mdi-plus"></i>
+    </button>
+  </div>
+
+  <!-- Modal 2 -->
+  <div class="modal fade" id="createRecipeModal" tabindex="-1" aria-labelledby="createRecipeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-success-subtle">
+          <h1 class="modal-title fs-5" id="createRecipeModalLabel">Create Recipe</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <form class="row">
+              <div class="col-6">
+                <div class="mb-3">
+                  <label for="createRecipeTitle" class="form-label">Title</label>
+                  <input type="string" class="form-control" id="createRecipeTitle">
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="mb-3">
+                  <label for="createRecipeCategory" class="form-label">Category</label>
+                  <input type="string" class="form-control" id="createRecipeCategory">
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped lang="scss">
@@ -233,5 +275,12 @@ async function editRecipe() {
   object-fit: cover;
   width: 100%;
 
+}
+
+.custom-padding {
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+  padding-top: 0em;
+  padding-bottom: 0em;
 }
 </style>
