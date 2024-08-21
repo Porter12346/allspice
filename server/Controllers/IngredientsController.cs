@@ -1,9 +1,7 @@
 namespace allspice.Controllers;
 
-
 [ApiController]
 [Route("api/[controller]")]
-
 public class IngredientsController : ControllerBase
 {
 
@@ -42,7 +40,7 @@ public class IngredientsController : ControllerBase
         {
             Account userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
             _ingredientsService.DeleteIngredient(ingredientId, userInfo.Id);
-            return("deleted sueccfully");
+            return ("deleted sueccfully");
         }
         catch (Exception exception)
         {

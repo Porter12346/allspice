@@ -3,7 +3,6 @@ using Dapper;
 
 namespace allspice.Repositories;
 
-
 public class IngredientsRepository
 {
 
