@@ -14,4 +14,37 @@ public class FavoritesController : ControllerBase
         _favoritesService = favoritesService;
         _auth0Provider = auth0Provider;
     }
+
+    [HttpPost]
+    [Authorize]
+
+    public async Task<ActionResult<FavoriteRecipe>> createFavorite([FromBody]Favorite favoriteData){
+        try
+        {
+            Profile userInfo = await _auth0Provider.GetUserInfoAsync<Profile>(HttpContext);
+            favoriteData.accountId = userInfo.Id;
+            FavoriteRecipe favorite = _favoritesService.createFavorite(favoriteData);
+            return favorite;
+        }
+        catch (Exception exception)
+        {
+            return BadRequest(exception.Message);
+        }
+    }
+
+    [HttpDelete("{favoriteId}")]
+    [Authorize]
+
+    public async Task<ActionResult<String>> deleteFavorite(int favoriteId){
+        try
+        {
+            Profile userInfo = await _auth0Provider.GetUserInfoAsync<Profile>(HttpContext);
+            _favoritesService.deleteFavorite(favoriteId, userInfo.Id);
+            return "Deleted Successfully";
+        }
+        catch (Exception exception)
+        {
+            return BadRequest(exception.Message);
+        }
+    }
 }
