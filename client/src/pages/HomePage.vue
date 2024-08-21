@@ -10,13 +10,53 @@ import { computed, onMounted, ref, watch } from 'vue';
 
 const recipes = computed(() => AppState.recipes)
 const account = computed(() => AppState.account)
+const favorites = computed(() => AppState.favorites)
 
 onMounted(() => {
   getRecipes()
+  getFavorites()
 })
 
+const favoritesDisplay = ref(false)
+
+async function getFavorites() {
+  await recipesService.getFavoriteRecipes()
+}
+
 async function getRecipes() {
-  await recipesService.getRecipes()
+  try {
+    await recipesService.getRecipes()
+  }
+  catch (error) {
+    Pop.error(error);
+  }
+}
+
+async function setAll() {
+  try {
+    await getRecipes()
+  }
+  catch (error) {
+    Pop.error(error);
+  }
+}
+
+async function setOwn() {
+  try {
+    await recipesService.getOwnRecipes()
+  }
+  catch (error) {
+    Pop.error(error);
+  }
+}
+
+async function setFavorites() {
+  try {
+    await recipesService.setFavorites()
+  }
+  catch (error) {
+    Pop.error(error);
+  }
 }
 </script>
 
@@ -39,24 +79,29 @@ async function getRecipes() {
     </div>
     <div class="container">
       <div class="row">
-        <div class="col-2"></div>
-        <div class="col-8 justify-content-center align-items-center shadow neg-mar">
+        <div v-if="account" class="col-2"></div>
+        <div v-if="account" class="col-8 justify-content-center align-items-center shadow neg-mar">
           <div class="row text-center">
             <div class="col-4 p-2 border">
-              <a href="">Home</a>
+              <span @click="setAll()" class="text-primary" type="button">Home</span>
             </div>
             <div class="col-4 p-2 border">
-              <a href="">Your recipes</a>
+              <span @click="setOwn()" class="text-primary" type="button">Your recipes</span>
             </div>
             <div class="col-4 p-2 border">
-              <a href="">favorites</a>
+              <span @click="setFavorites()" class="text-primary" type="button">favorites</span>
             </div>
           </div>
         </div>
         <div class="container">
-          <div v-if="recipes.length > 0" class="row">
+          <div v-if="recipes.length > 0 && !favoritesDisplay" class="row">
             <div v-for="recipe in recipes" :key="recipe.id" class="col-4">
-              <RecipeCard :recipeProp="recipe" />
+              <RecipeCard :recipeProp="recipe" :accountProp="account" />
+            </div>
+          </div>
+          <div v-else-if="recipes.length > 0 && favoritesDisplay" class="row">
+            <div v-for="recipe in favorites" :key="recipe.id" class="col-4">
+              <RecipeCard :recipeProp="recipe" :accountProp="account" />
             </div>
           </div>
         </div>
@@ -75,7 +120,7 @@ async function getRecipes() {
     </button>
   </div>
   <RestaurantForm />
-  <RecipeInfoCard :accountProp="account"/>
+  <RecipeInfoCard :accountProp="account" />
 </template>
 
 <style scoped lang="scss">
