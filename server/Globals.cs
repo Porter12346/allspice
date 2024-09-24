@@ -14,3 +14,6 @@ global using CodeWorks.Utils;
 global using allspice.Repositories;
 global using allspice.Services;
 global using allspice.Models;
+global using Amazon.Runtime;
+global using Amazon.S3;
+global using Amazon.S3.Model;
