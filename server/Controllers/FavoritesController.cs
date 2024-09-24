@@ -3,7 +3,6 @@ namespace allspice.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 
-
 public class FavoritesController : ControllerBase
 {
     private readonly FavoritesService _favoritesService;
@@ -18,7 +17,8 @@ public class FavoritesController : ControllerBase
     [HttpPost]
     [Authorize]
 
-    public async Task<ActionResult<FavoriteRecipe>> createFavorite([FromBody]Favorite favoriteData){
+    public async Task<ActionResult<FavoriteRecipe>> createFavorite([FromBody] Favorite favoriteData)
+    {
         try
         {
             Profile userInfo = await _auth0Provider.GetUserInfoAsync<Profile>(HttpContext);
@@ -35,7 +35,8 @@ public class FavoritesController : ControllerBase
     [HttpDelete("{favoriteId}")]
     [Authorize]
 
-    public async Task<ActionResult<String>> deleteFavorite(int favoriteId){
+    public async Task<ActionResult<String>> deleteFavorite(int favoriteId)
+    {
         try
         {
             Profile userInfo = await _auth0Provider.GetUserInfoAsync<Profile>(HttpContext);

@@ -1,8 +1,3 @@
-
-
-
-
-
 namespace allspice.Repositories;
 
 public class FavoritesRepository
@@ -39,8 +34,8 @@ public class FavoritesRepository
         string sql = "DELETE FROM favorites WHERE id = @favoriteId LIMIT 1;";
 
         int changed = _db.Execute(sql, new { favoriteId });
-        if(changed > 1)throw new Exception("DELETED MORE THAN ONE!");
-        if(changed == 0)throw new Exception("Nothing deleted");
+        if (changed > 1) throw new Exception("DELETED MORE THAN ONE!");
+        if (changed == 0) throw new Exception("Nothing deleted");
     }
 
     internal Favorite GetFavoriteById(int id)
@@ -51,7 +46,7 @@ public class FavoritesRepository
         FROM favorites
         WHERE favorites.id = @id;";
 
-        Favorite favorite = _db.Query<Favorite>(sql, new {id}).FirstOrDefault();
+        Favorite favorite = _db.Query<Favorite>(sql, new { id }).FirstOrDefault();
         return favorite;
     }
 
@@ -67,7 +62,7 @@ public class FavoritesRepository
         JOIN recipes ON recipes.id = favorites.recipeId
         WHERE favorites.accountId = @userId;";
 
-        List<FavoriteRecipe> favoriteRecipes = _db.Query<Favorite, Profile, FavoriteRecipe, FavoriteRecipe>(sql, JoinVirtuals, new{userId}).ToList();
+        List<FavoriteRecipe> favoriteRecipes = _db.Query<Favorite, Profile, FavoriteRecipe, FavoriteRecipe>(sql, JoinVirtuals, new { userId }).ToList();
         return favoriteRecipes;
     }
 

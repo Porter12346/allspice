@@ -1,8 +1,3 @@
-
-
-
-
-
 namespace allspice.Services;
 
 public class FavoritesService
@@ -16,21 +11,21 @@ public class FavoritesService
 
     internal FavoriteRecipe createFavorite(Favorite favoriteData)
     {
-        FavoriteRecipe favorite =  _favoritesRepository.createFavorite(favoriteData);
+        FavoriteRecipe favorite = _favoritesRepository.createFavorite(favoriteData);
         return favorite;
     }
 
     internal Favorite GetFavoriteById(int id)
     {
         Favorite favorite = _favoritesRepository.GetFavoriteById(id);
-        if(favorite == null)throw new Exception("no restaurant found with given id");
+        if (favorite == null) throw new Exception("no restaurant found with given id");
         return favorite;
     }
 
     internal void deleteFavorite(int favoriteId, string userId)
     {
         Favorite favorite = GetFavoriteById(favoriteId);
-        if(favorite.accountId != userId)throw new Exception("This is not your favorite");
+        if (favorite.accountId != userId) throw new Exception("This is not your favorite");
         _favoritesRepository.deleteFavorite(favoriteId);
     }
 
